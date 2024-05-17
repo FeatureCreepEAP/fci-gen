@@ -65,7 +65,10 @@ public class FCIUpdater {
 		for (CtClass clazz : sl.clazzes) {
 			String clazz_name = clazz.getName();
 			if (!isDenyListed(clazz_name)) {
-				main.addClass(clazz_name, getClass(clazz_name));
+				String actualizado = getClass(clazz_name);
+				if(actualizado!=null) {
+				main.addClass(clazz_name, actualizado);
+				}
 				List<String> incls = getIncludes(clazz_name);
 				if (!incls.isEmpty()) {
 					String incl = String.join(",", incls);
@@ -73,7 +76,6 @@ public class FCIUpdater {
 				}
 			}
 		}
-
 		
 		App.config.get("unknowns_minimum").get("class").set(class_index);
 		App.config.get("unknowns_minimum").get("def").set(def_index);
@@ -90,6 +92,13 @@ public class FCIUpdater {
 			}
 
 		}
+
+		String lower = test.toLowerCase();
+		if(lower.contains("compareto")||lower.contains("equals")||lower.contains("notify")||lower.contains("class")||lower.contains("finalize")||lower.contains("wait")||lower.contains("tostring")||lower.contains("equals")||lower.contains("hashcode")) {
+			return true;
+		}
+		
+	
 		return false;
 
 	}
@@ -97,6 +106,10 @@ public class FCIUpdater {
 	public static String getVar(String var) {
 		// TODO Auto-generated method stub
 
+		if(varHasMaps(var)) {
+			
+			
+		
 		boolean is_in_input = false;
 		String[] old_class_arr = java.util.Arrays.copyOfRange(var.split("\\."), 0, var.split("\\.").length - 1);
 		String old_classname = String.join(".", old_class_arr);
@@ -147,11 +160,18 @@ public class FCIUpdater {
 	//		return null;// Likely not obfuscated
 	//	} This has been causing issues, we will reenable it later
 
-	}
+		}else {
+				return null;
+			}
+		
+		
+		}
 
 	public static String getDef(String def) {
 		// TODO Auto-generated method stub
 
+		
+		if(defHasMaps(def)) {
 		boolean is_in_input = false;
 		String[] old_class_arr = java.util.Arrays.copyOfRange(def.split("\\."), 0, def.split("\\.").length - 1);
 		String old_classname = String.join(".", old_class_arr);
@@ -176,15 +196,15 @@ public class FCIUpdater {
 
 					if (input_fci.getDefs().containsKey(new_key)) {
 						String ret = input_fci.getDefs().get(new_key);
-						if (ret.equals(old_name) && ret.equals(int_value)) {
-							return null;
-						}
+//						if (ret.equals(old_name) && ret.equals(int_value)) {
+//							return null;
+//						}
 						return ret;
 					}
 
-					if (int_value.equals(old_name)) {
-						return null;
-					}
+//					if (int_value.equals(old_name)) {
+//						return null;
+//					}
 
 				}
 
@@ -202,6 +222,12 @@ public class FCIUpdater {
 	//		return null;// Likely not obfuscated
 	//	} This has been causing issues, we will turn it on again later
 
+		}else {
+			return null;
+		}
+			
+			
+			
 	}
 
 	// We could also make this do LocalVars
@@ -262,6 +288,8 @@ public class FCIUpdater {
 
 //Subclasses should already be mostly parsed
 
+		
+		if(classHasMaps(clazz)) {
 		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
@@ -297,6 +325,13 @@ public class FCIUpdater {
 
 		class_index++;
 		return out;
+		
+		
+		
+		}else {
+			return null;
+		}
+		
 	}
 
 	public static List<String> getIncludes(String clazz) {
@@ -306,4 +341,69 @@ public class FCIUpdater {
 	}
 	
 
+	//To check if any of the existing mappings have a mapping for a given def
+	public static boolean defHasMaps(String def) {
+		
+		if(MappingsObtainer.input.size()==0) {
+			return true; // TO be reevaluated but if empty we would not want a conflict with this method
+		}
+		
+		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+			
+			if(entry.getValue().getDefs().containsKey(def)) {
+				return true;
+			}
+			
+			
+		}
+	
+		return false;
+		
+	}
+	
+	
+	//To check if any of the existing mappings have a mapping for a given def
+	public static boolean varHasMaps(String var) {
+		
+		if(MappingsObtainer.input.size()==0) {
+			return true; // TO be reevaluated but if empty we would not want a conflict with this method
+		}
+		
+		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+			
+			if(entry.getValue().getVars().containsKey(var)) {
+				return true;
+			}
+			
+			
+		}
+	
+		return false;
+		
+	}
+	
+	
+	//To check if any of the existing mappings have a mapping for a given def
+	public static boolean classHasMaps(String clazz) {
+		
+		if(MappingsObtainer.input.size()==0) {
+			return true; // TO be reevaluated but if empty we would not want a conflict with this method
+		}
+		
+		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+			
+			if(entry.getValue().getClasses().containsKey(clazz)) {
+				return true;
+			}
+			
+			
+		}
+	
+		return false;
+		
+	}
+	
+	
+	
+	
 }

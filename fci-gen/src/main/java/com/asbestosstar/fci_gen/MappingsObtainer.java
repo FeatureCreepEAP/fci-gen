@@ -202,8 +202,11 @@ public class MappingsObtainer {
 					String filename = file.getName();
 					if (filename.contains("sugercane")) { // includes parchment and mojmap
 						input_fcis.put("sugercane", new PDMEMappings(inputStream));
+						App.logger.info("Found SugarCane");
 					} else if (filename.contains("legacy-fabric-intermediary")) {
 						input_fcis.put("legacy-fabric-intermediary", new PDMEMappings(inputStream));
+						App.logger.info("Found Legacy Fain");
+
 					} else if (filename.contains("fabric-intermediary")) {
 						Mappings fain = new PDMEMappings(inputStream);
 						input_fcis.put("fabric-intermediary", fain);
@@ -217,11 +220,15 @@ public class MappingsObtainer {
 							App.logger.info("Added REF");
 						}
 						
-						
+						App.logger.info("Found FAIN");
+
 					} else if (filename.contains("babric-intermediary")) {
 						input_fcis.put("babric-intermediary", new PDMEMappings(inputStream));
-					} else if (filename.contains("srg")) {
+					}
+					else if (filename.contains("srg") && !filename.contains("parchsrg")) {
 						input_fcis.put("srg", new PDMEMappings(inputStream));
+						App.logger.info("Found SRG");
+
 					} else if (filename.contains("mcp")) {
 						input_fcis.put("mcp", new PDMEMappings(inputStream));
 					} else if (filename.contains("hashed-mojmap")) {
@@ -235,6 +242,8 @@ public class MappingsObtainer {
 					} else if (filename.contains("yarn")) { // Since POMF was never used at runtime it is ok to use the
 															// updated yarn mappings from LegacyFabric
 						input_fcis.put("yarn", new PDMEMappings(inputStream));
+						App.logger.info("Found Yarn");
+
 					} else if (filename.contains("barn")) {
 						input_fcis.put("barn", new PDMEMappings(inputStream));
 					} else if (filename.contains("blayyke_yarn")) {
@@ -755,16 +764,17 @@ public class MappingsObtainer {
 		} else if (version.equals("1.16.4") || version.equals("1.16.5")) {
 			latest_mcp = "20210309";
 		} else if (!isNewerThanVersion("1.7.9")) {
-			InputStream stre = FCIGenUtils
-					.getFileInputStream("https://maven.minecraftforge.net/de/oceanlabs/mcp/versions.json");
+			
 			try {
+				InputStream stre = FCIGenUtils
+						.getFileInputStream("https://maven.minecraftforge.net/de/oceanlabs/mcp/versions.json");
 				ModelNode node = ModelNode.fromJSONString(FCIGenUtils.getStringFromInputStream(stre));
 				if (node.has(version)) {
 					latest_mcp = node.get(version).get("snapshot").get(0).asString();// Snapshot always has but not //
 																						// always stable
 				}
 
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
