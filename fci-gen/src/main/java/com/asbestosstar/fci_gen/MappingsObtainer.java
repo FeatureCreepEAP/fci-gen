@@ -205,7 +205,19 @@ public class MappingsObtainer {
 					} else if (filename.contains("legacy-fabric-intermediary")) {
 						input_fcis.put("legacy-fabric-intermediary", new PDMEMappings(inputStream));
 					} else if (filename.contains("fabric-intermediary")) {
-						input_fcis.put("fabric-intermediary", new PDMEMappings(inputStream));
+						Mappings fain = new PDMEMappings(inputStream);
+						input_fcis.put("fabric-intermediary", fain);
+						if(input_fcis.containsKey("ref")) {
+							Mappings ref = input_fcis.get("ref");
+							fain.getClasses().putAll(ref.getClasses());
+							fain.getDefs().putAll(ref.getDefs());
+							fain.getVars().putAll(ref.getVars());
+							fain.getParams().putAll(ref.getParams());
+							input_fcis.remove("ref");
+							App.logger.info("Added REF");
+						}
+						
+						
 					} else if (filename.contains("babric-intermediary")) {
 						input_fcis.put("babric-intermediary", new PDMEMappings(inputStream));
 					} else if (filename.contains("srg")) {
@@ -246,17 +258,18 @@ public class MappingsObtainer {
 					} else if (filename.contains("server")) {
 						input_fcis.put("server", new PDMEMappings(inputStream));
 					}
-//					else if (filename.contains("ref")) { // Remove this after done
-//						Mappings ref = new PDMEMappings(inputStream);
-//						if(input_fcis.containsKey("fabric-intermediary")) {
-//							Mappings fain = input_fcis.get("fabric-intermediary");
-//							fain.getClasses().putAll(fain.getClasses());
-//							fain.getDefs().putAll(fain.getDefs());
-//							fain.getVars().putAll(fain.getVars());
-//							fain.getParams().putAll(fain.getParams());
-//						}
-//						
-//					} 
+					else if (filename.contains("ref")) { // Remove this after done
+						Mappings ref = new PDMEMappings(inputStream);
+						if(input_fcis.containsKey("fabric-intermediary")) {
+							Mappings fain = input_fcis.get("fabric-intermediary");
+							fain.getClasses().putAll(ref.getClasses());
+							fain.getDefs().putAll(ref.getDefs());
+							fain.getVars().putAll(ref.getVars());
+							fain.getParams().putAll(ref.getParams());
+						}else {
+							App.logger.info("No FAIN");						}
+							input_fcis.put("ref", ref);
+					} 
 					
 					else { // obf common
 						input_fcis.put("obf", new PDMEMappings(inputStream));

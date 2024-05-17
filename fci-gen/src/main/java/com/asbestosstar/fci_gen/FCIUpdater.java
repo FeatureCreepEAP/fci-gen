@@ -1,5 +1,6 @@
 package com.asbestosstar.fci_gen;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +14,10 @@ import javassist.bytecode.Descriptor;
 public class FCIUpdater {
 
 	public static String[] denylisted_prefixes = new String[] { "io.", "net.minecraftforge", "net.fabricmc", "org.",
-			"sun.", "com.", "ow2.", "ca.", "it.", "net.java.", "gnu"};
+			"sun.", "com.", "ow2.", "ca.", "it.", "net.java.", "gnu.", "javax.","jopt.", "oshi.","joptsimple"};
 	public static Mappings main = new PDMEMappings();
 	public static StructureLib sl = new StructureLib();
+	public static ArrayList<String> done_classes = new ArrayList<String>();
 	public static int class_index = 0;
 	public static int def_index = 0;
 	public static int var_index = 0;
@@ -270,7 +272,12 @@ public class FCIUpdater {
 					String new_classname = maps.getClassMappedName(clazz);
 
 					if (input_fci.getClasses().containsKey(new_classname)) {
-						return input_fci.getClassMappedName(new_classname);
+					String nuevo = input_fci.getClassMappedName(new_classname);
+					if(!done_classes.contains(nuevo)) {
+						done_classes.add(nuevo);
+						return nuevo;
+					}
+					
 					}
 
 				}
