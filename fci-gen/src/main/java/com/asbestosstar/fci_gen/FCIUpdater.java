@@ -72,7 +72,7 @@ public class FCIUpdater {
 				List<String> incls = getIncludes(clazz_name);
 				if (!incls.isEmpty()) {
 					String incl = String.join(",", incls);
-					main.getIncludes().put(clazz_name, incl);
+					main.getIncludes().put(clazz_name, incl.split(","));//todo, just make normal arrlist to arr converter
 				}
 			}
 		}
