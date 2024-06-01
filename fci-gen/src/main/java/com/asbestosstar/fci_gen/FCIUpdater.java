@@ -13,8 +13,8 @@ import javassist.bytecode.Descriptor;
 
 public class FCIUpdater {
 
-	public static String[] denylisted_prefixes = new String[] { "io.", "net.minecraftforge", "net.fabricmc", "org.",
-			"sun.", "com.", "ow2.", "ca.", "it.", "net.java.", "gnu.", "javax.","jopt.", "oshi.","joptsimple"};
+	public static String[] denylisted_prefixes = new String[] { "io.netty", "net.minecraftforge", "net.fabricmc", "org.apache",
+			"com.sun", "com.mojang","com.google", "ow2.", "ca.weblite", "it.unimi", "net.java.", "gnu.trove.", "javax.","jopt.", "oshi.","joptsimple","commons-io","org.joml","org.slf4j","com.github"};
 	public static Mappings main = new PDMEMappings();
 	public static StructureLib sl = new StructureLib();
 	public static ArrayList<String> done_classes = new ArrayList<String>();
@@ -45,8 +45,9 @@ public class FCIUpdater {
 		App.logger.info("Updating Defs");
 
 		for (String def : sl.getOldestDeclaredMethods()) {
-
+			
 			if (!isDenyListed(def)) {
+				
 				String ret_def = getDef(def);
 				if (ret_def != null) { // Return null for suspected not obfuscated
 					main.addDef(def, ret_def);
@@ -87,18 +88,11 @@ public class FCIUpdater {
 
 	public static boolean isDenyListed(String test) {
 		for (String preix : denylisted_prefixes) {
-			if (test.startsWith(preix)) {
+			if (test.startsWith(preix)) {			
 				return true;
 			}
 
 		}
-
-		String lower = test.toLowerCase();
-		if(lower.contains("compareto")||lower.contains("equals")||lower.contains("notify")||lower.contains("class")||lower.contains("finalize")||lower.contains("wait")||lower.contains("tostring")||lower.contains("equals")||lower.contains("hashcode")) {
-			return true;
-		}
-		
-	
 		return false;
 
 	}
