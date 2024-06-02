@@ -18,6 +18,7 @@ public class FCIUpdater {
 	public static Mappings main = new PDMEMappings();
 	public static StructureLib sl = new StructureLib();
 	public static ArrayList<String> done_classes = new ArrayList<String>();
+	public static ArrayList<String> vars_y_defs_completa = new ArrayList<String>();
 	public static int class_index = 0;
 	public static int def_index = 0;
 	public static int var_index = 0;
@@ -45,6 +46,10 @@ public class FCIUpdater {
 		App.logger.info("Updating Defs");
 
 		for (String def : sl.getOldestDeclaredMethods()) {
+			
+			if(def.contains("aed.a(Lvg;)V")) {
+				System.out.println(def);
+			}
 			
 			if (!isDenyListed(def)) {
 				
@@ -131,7 +136,11 @@ public class FCIUpdater {
 						if (ret.equals(int_value) && ret.equals(old_name)) {
 							return null;
 						}
-						return ret;
+
+						if (notConflicting(old_classname+":"+old_desc+"@"+ret)) {
+							return ret;
+						}
+						
 					}
 
 					if (int_value.equals(old_name)) {
@@ -164,6 +173,9 @@ public class FCIUpdater {
 	public static String getDef(String def) {
 		// TODO Auto-generated method stub
 
+		if(def.contains("aed.a(Lvg;)V")) {
+			System.out.println(def);
+		}
 		
 		if(defHasMaps(def)) {
 		boolean is_in_input = false;
@@ -193,7 +205,10 @@ public class FCIUpdater {
 //						if (ret.equals(old_name) && ret.equals(int_value)) {
 //							return null;
 //						}
+					if (notConflicting(old_classname+old_desc+"@"+ret)) {
 						return ret;
+					}
+					
 					}
 
 //					if (int_value.equals(old_name)) {
@@ -222,6 +237,15 @@ public class FCIUpdater {
 			
 			
 			
+	}
+
+	public static boolean notConflicting(String string) {
+		// TODO Auto-generated method stub
+		if(vars_y_defs_completa.contains(string)) {
+			return false;
+		}
+		vars_y_defs_completa.add(string);
+		return true;
 	}
 
 	// We could also make this do LocalVars
