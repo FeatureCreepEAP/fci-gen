@@ -98,6 +98,14 @@ public class FCIUpdater {
 			}
 
 		}
+
+		
+		String lower = test.toLowerCase();
+		if(lower.contains("compareto(")||lower.contains("notify(")||lower.contains("getClass()")||lower.contains("finalize()")||lower.contains("wait()")||lower.contains("tostring()")||lower.contains("equals(Ljava/lang/object;)")||lower.contains("hashcode()")) {
+			return true;
+		}
+		
+		
 		return false;
 
 	}
