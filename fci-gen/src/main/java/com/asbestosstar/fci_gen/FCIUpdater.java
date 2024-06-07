@@ -14,7 +14,7 @@ import javassist.bytecode.Descriptor;
 public class FCIUpdater {
 
 	public static String[] denylisted_prefixes = new String[] { "io.netty", "net.minecraftforge", "net.fabricmc", "org.apache",
-			"com.sun", "com.mojang","com.google", "ow2.", "ca.weblite", "it.unimi", "net.java.", "gnu.trove.", "javax.","jopt.", "oshi.","joptsimple","commons-io","org.joml","org.slf4j","com.github"};
+			"com.sun", "com.mojang","com.google","tv.twitch", "ow2.", "ca.weblite", "it.unimi", "net.java.", "gnu.trove.", "javax.","jopt.", "oshi.","joptsimple","commons-io","org.joml","org.slf4j","com.github"};
 	public static Mappings main = new PDMEMappings();
 	public static StructureLib sl = new StructureLib();
 	public static ArrayList<String> done_classes = new ArrayList<String>();
@@ -101,7 +101,7 @@ public class FCIUpdater {
 
 		
 		String lower = test.toLowerCase();
-		if(lower.contains("compare(")||lower.contains("notify(")||lower.contains("getClass()")||lower.contains("finalize()")||lower.contains("wait()")||lower.contains("tostring()")||lower.contains("equals(ljava/lang/object;)")||lower.contains("call()ljava/lang/object;")||lower.contains("hashcode()")) {
+		if(lower.contains("compare(")||lower.contains("compareto(ljava/lang/object;)i")||lower.contains("notify(")||lower.contains("getClass()")||lower.contains("finalize()")||lower.contains("wait()")||lower.contains("tostring()")||lower.contains("equals(ljava/lang/object;)")||lower.contains("call()ljava/lang/object;")||lower.contains("hashcode()")||lower.contains("clear()V")||lower.contains("close()V")||lower.contains("value(")||lower.contains("valueof(")||lower.contains("values(")) {
 			return true;
 		}
 		
