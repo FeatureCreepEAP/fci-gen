@@ -202,7 +202,7 @@ public class FCIUpdater {
 		String old_desc = "(" + def.split("\\(")[1];
 		String old_name = def.split("\\(")[0].split("\\.")[def.split("\\.").length - 1];
 
-		if(old_name.length()>2) {
+		if(old_name.length()>2&&!old_name.endsWith("_")) {
 			return old_name;
 		}
 		
