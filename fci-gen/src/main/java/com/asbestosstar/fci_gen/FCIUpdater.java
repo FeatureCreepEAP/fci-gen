@@ -132,7 +132,12 @@ public class FCIUpdater {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
 			Mappings maps = MappingsObtainer.input.get(type);
-
+			if(type.equals("obf")) {//Need to adjust this for servers and clients
+				if(input_fci.getVars().containsKey(var)) {
+					return input_fci.getVars().get(var);
+				}
+			}
+			
 			if (maps != null) {
 				if (maps.getVars().containsKey(var)) {
 					is_in_input = true;
@@ -207,6 +212,13 @@ public class FCIUpdater {
 			Mappings input_fci = entry.getValue();
 			Mappings maps = MappingsObtainer.input.get(type);
 
+			if(type.equals("obf")) {//Need to adjust this for servers and clients
+				if(input_fci.getDefs().containsKey(def)) {
+					return input_fci.getDefs().get(def);
+				}
+			}
+			
+			
 			if (maps != null) {
 				if (maps.getDefs().containsKey(def)) {
 					is_in_input = true;
@@ -285,6 +297,10 @@ public class FCIUpdater {
 				Mappings input_fci = entry.getValue();
 				Mappings maps = MappingsObtainer.input.get(type);
 
+				if(type.equals("obf")) {//Need to adjust this for servers and clients
+					 maps=input_fci;
+				}
+				
 				if (maps != null) {
 					if (maps.getDefs().containsKey(def)) {
 						String int_value = maps.getDefs().get(def);
@@ -331,6 +347,12 @@ public class FCIUpdater {
 			Mappings input_fci = entry.getValue();
 			Mappings maps = MappingsObtainer.input.get(type);
 
+			if(type.equals("obf")) {//Need to adjust this for servers and clients
+				if(input_fci.getClasses().containsKey(clazz)) {
+					return input_fci.getClasses().get(clazz);
+				}
+			}
+			
 			if (maps != null) {
 				if (maps.getClasses().containsKey(clazz)) {
 					String new_classname = maps.getClassMappedName(clazz);
