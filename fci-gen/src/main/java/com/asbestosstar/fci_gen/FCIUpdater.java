@@ -123,6 +123,11 @@ public class FCIUpdater {
 		String old_desc = var.split(":")[1];
 		String old_name = var.split(":")[0].split("\\.")[var.split("\\.").length - 1];
 
+		if(old_name.length()>2) {
+			return old_name;
+		}
+		
+		
 		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
@@ -192,6 +197,11 @@ public class FCIUpdater {
 		String old_desc = "(" + def.split("\\(")[1];
 		String old_name = def.split("\\(")[0].split("\\.")[def.split("\\.").length - 1];
 
+		if(old_name.length()>2) {
+			return old_name;
+		}
+		
+		
 		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
