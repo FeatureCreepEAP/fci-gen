@@ -394,7 +394,7 @@ public class FCIUpdater {
 
 	public static List<String> getIncludes(String clazz) {
 
-		return sl.getImmediateDerivativeClasses(clazz);
+		return sl.getImmediateInheritedClasses(clazz);
 
 	}
 	
