@@ -12,6 +12,9 @@ import java.util.jar.JarInputStream;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
@@ -63,6 +66,7 @@ public class DupRemover {
 	                     try {
 	                     ctClass.defrost();
 	                     clazzes.add(ctClass.getClassFile());
+	                     
 	                     }catch(Exception e) {
 	                    	 e.printStackTrace();
 	                    	 //this is not likely to go well
@@ -97,7 +101,7 @@ public class DupRemover {
 		}
 
 		for (FieldInfo var : file.getFields()) { // I soon need to find a way to do undeclared
-		//	putField(var,file);
+			putField(var,file);
 		}
 		}
 	}
@@ -113,22 +117,70 @@ public class DupRemover {
 	
 	
 	public static void putMethod(MethodInfo def, ClassFile file) {
-//
-//		ArrayList<String> recersive_names = new ArrayList<String>();
-//
-//		String old_nombre = def.getName();
-//		String key = file.getName().replace("/", ".") + "." + def.getName() + def.getDescriptor();
-//		String nombre = FCIUpdater.main.getDefMappedName(key);;
-//
-//		if (nombre != null) {
-//			if (classFileHasMethod(file.getName(), nombre, def.getDescriptor()) && !old_nombre.equals(nombre)) {
-//				System.out.println("Dupe" + file.getName() + nombre + def.getDescriptor());
-//			} else if (!old_nombre.equals(nombre)) {
-//				def.setName(nombre);
-//			}
-//
-//		}
 
+		ArrayList<String> recersive_names = new ArrayList<String>();
+
+		String old_nombre = def.getName();
+		String key = file.getName().replace("/", ".") + "." + def.getName() + def.getDescriptor();
+		String nombre = FCIUpdater.main.getDefMappedName(key);;
+
+		if (nombre != null) {
+			if (classFileHasMethod(file.getName(), nombre, def.getDescriptor()) && !old_nombre.equals(nombre)) {
+				System.out.println("Dupe" + file.getName() + nombre + def.getDescriptor());
+			} else if (!old_nombre.equals(nombre)) {
+				def.setName(nombre);
+			}
+
+		}
+
+	}
+	
+	public static boolean classFileHasMethod(String clazz, String method_name, String desc) {
+
+		for (CtMethod method : getClassFromPool(clazz).getMethods()) {
+			if (method.getName().equals(method_name) && method.getSignature().equals(desc)) {
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+	
+	
+	
+	
+	
+	
+	public static void putField(FieldInfo var, ClassFile file) {
+
+		ArrayList<String> recersive_names = new ArrayList<String>();
+
+		String old_nombre = var.getName();
+		String key = file.getName().replace("/", ".") + "." + var.getName() + var.getDescriptor();
+		String nombre = FCIUpdater.main.getVarMappedName(key);;
+
+		if (nombre != null) {
+			if (classFileHasField(file.getName(), nombre, var.getDescriptor()) && !old_nombre.equals(nombre)) {
+				System.out.println("Dupe" + file.getName() + nombre + var.getDescriptor());
+			} else if (!old_nombre.equals(nombre)) {
+				var.setName(nombre);
+			}
+
+		}
+
+	}
+	
+	public static boolean classFileHasField(String clazz, String field_name, String desc) {
+
+		for (CtField field : getClassFromPool(clazz).getFields()) {
+			if (field.getName().equals(field_name) && field.getSignature().equals(desc)) {
+				return true;
+			}
+
+		}
+
+		return false;
 	}
 	
 	
@@ -138,6 +190,17 @@ public class DupRemover {
 	
 	
 	
+	
+	
+	public static CtClass getClassFromPool(String name) {
+		try {// I also need a delete classes array
+			return FCIUpdater.sl.pool.get(name);
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+				return FCIUpdater.sl.pool.makeClass(name);
+		}
+	}
 	
 	
 
