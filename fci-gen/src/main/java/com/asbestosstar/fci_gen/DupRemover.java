@@ -158,7 +158,7 @@ public class DupRemover {
 
 		String old_nombre = var.getName();
 		String key = file.getName().replace("/", ".") + "." + var.getName() + var.getDescriptor();
-		String nombre = FCIUpdater.main.getVarMappedName(key);;
+		String nombre = FCIUpdater.main.getVars().get(key);; // just use get so we only get the oldest
 
 		if (nombre != null) {
 			if (classFileHasField(file.getName(), nombre, var.getDescriptor()) && !old_nombre.equals(nombre)) {
