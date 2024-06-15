@@ -122,7 +122,7 @@ public class DupRemover {
 
 		String old_nombre = def.getName();
 		String key = file.getName().replace("/", ".") + "." + def.getName() + def.getDescriptor();
-		String nombre = FCIUpdater.main.getDefMappedName(key);;
+		String nombre = FCIUpdater.main.getDefs().get(key);;
 
 		if (nombre != null) {
 			if (classFileHasMethod(file.getName(), nombre, def.getDescriptor()) && !old_nombre.equals(nombre)) {
