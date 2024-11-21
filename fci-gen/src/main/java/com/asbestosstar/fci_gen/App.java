@@ -6,12 +6,17 @@ import java.io.IOException;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 
+import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
+import com.asbestosstar.minecraftmappingsobtainer.MinecraftSide;
+
 public class App {
 
 	public static Logger logger = Logger.getLogger("fci-gen", "FCIGenerator");
 	public static ModelNode config = new ModelNode();
 	public static int config_format = 0;
 	public static ModelNode input_mappings = new ModelNode();
+	public static MinecraftSide side;
+	public static MappingsObtainer obtainer;
 	
 	public static void main(String[] args) {
 		File config_file = new File("config.dmr");
@@ -38,13 +43,17 @@ public class App {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(config.get("side").asString().equals("server")) {
+		side=MinecraftSide.SERVER;
+		}else {
+		side=MinecraftSide.CLIENT;
+		}
 		
 		if(config_format>config.get("fci-gen-config-format").asInt()) {
 			logger.fatal("Obsolete Config, please backup and delete and restart program to get new config");
 		}
-		
-		MappingsObtainer.getInput();
-		MappingsObtainer.getFCIInput();
+		obtainer = new MappingsObtainer(config.get("game-version").asString(),side);
+		GetInputFCI.getFCIInput();
 		FCIUpdater.onUpdate();
 		CSVGen.makeCSV();
 		ComboMaps.generateCombos();

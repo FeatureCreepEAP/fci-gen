@@ -29,9 +29,9 @@ public class DupRemover {
 	
 	public static void removeDupes() {
 		try {
-			MappingsObtainer.game_jar.reset();
-			addToClasspathJarFromStream(MappingsObtainer.game_jar);
-			MappingsObtainer.game_jar.reset();
+			App.obtainer.game_jar.reset();
+			addToClasspathJarFromStream(App.obtainer.game_jar);
+			App.obtainer.game_jar.reset();
 			rename_all();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

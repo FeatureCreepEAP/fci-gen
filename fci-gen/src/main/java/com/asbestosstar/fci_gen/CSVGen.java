@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.asbestosstar.assistremapper.Mappings;
+import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
 
 import javassist.CtClass;
 import javassist.bytecode.Descriptor;
@@ -16,7 +17,7 @@ public class CSVGen {
 	// public static String nl = System.getProperty("line.separator");
 
 	public static void makeCSV() {
-		File csv = new File(App.config.get("output").asString() + "/output-" + MappingsObtainer.version + ".csv");
+		File csv = new File(App.config.get("output").asString() + "/output-" + App.obtainer.version + ".csv");
 		csv.getParentFile().mkdirs();
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(csv.getCanonicalFile()))) {
@@ -25,7 +26,7 @@ public class CSVGen {
 
 			writer.write("obf,fci");
 
-			for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+			for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 				writer.write("," + entry.getKey());
 			}
 			writer.newLine();
@@ -36,7 +37,7 @@ public class CSVGen {
 				if (!FCIUpdater.isDenyListed(cname)) {
 					writer.write(cname + "," + unparseSubClass(FCIUpdater.main.getClassMappedName(cname)));
 
-					for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+					for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 						String out = ",";
 						if (entry.getValue().getClasses().containsKey(cname)) {
 							out = "," + unparseSubClass(entry.getValue().getClassMappedName(cname));
@@ -57,7 +58,7 @@ public class CSVGen {
 				if (!FCIUpdater.isDenyListed(var)) {
 					writer.write(var + "," + FCIUpdater.main.getVarMappedName(var));
 
-					for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+					for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 						String out = ",";
 						if (entry.getValue().getVars().containsKey(var)) {
 							out = "," + entry.getValue().getVarMappedName(var);
@@ -76,7 +77,7 @@ public class CSVGen {
 				if (!FCIUpdater.isDenyListed(def)) {
 					writer.write(def + "," + FCIUpdater.main.getDefMappedName(def));
 
-					for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+					for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 						String out = ",";
 						if (entry.getValue().getDefs().containsKey(def)) {
 							out = "," + entry.getValue().getDefMappedName(def);
@@ -125,7 +126,7 @@ public class CSVGen {
 				String full =  def+"_"+i;
 				writer.write(full + "," + FCIUpdater.main.getParamMappedName(def,i));
 
-				for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+				for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 					String out = ",";
 					if (entry.getValue().getParams().containsKey(full)) {
 						out = "," + entry.getValue().getParams().get(full);

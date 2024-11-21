@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.asbestosstar.assistremapper.Mappings;
 import com.asbestosstar.assistremapper.mappings.PDMEMappings;
+import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
 import com.asbestosstar.structurelib.StructureLib;
 
 import javassist.CtClass;
@@ -25,7 +26,7 @@ public class FCIUpdater {
 	public static int arg_index = 0;
 
 	public static void onUpdate() {
-		sl.addJar(MappingsObtainer.game_jar);
+		sl.addJar(App.obtainer.game_jar);
 		class_index = App.config.get("unknowns_minimum").get("class").asInt();
 		def_index = App.config.get("unknowns_minimum").get("def").asInt();
 		var_index = App.config.get("unknowns_minimum").get("var").asInt();
@@ -128,10 +129,10 @@ public class FCIUpdater {
 		}
 		
 		
-		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
-			Mappings maps = MappingsObtainer.input.get(type);
+			Mappings maps = App.obtainer.input.get(type);
 			if(type.equals("obf")) {//Need to adjust this for servers and clients
 				if(input_fci.getVars().containsKey(var)) {
 					return input_fci.getVars().get(var);
@@ -207,10 +208,10 @@ public class FCIUpdater {
 		}
 		
 		
-		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
-			Mappings maps = MappingsObtainer.input.get(type);
+			Mappings maps = App.obtainer.input.get(type);
 
 			if(type.equals("obf")) {//Need to adjust this for servers and clients
 				if(input_fci.getDefs().containsKey(def)) {
@@ -292,10 +293,10 @@ public class FCIUpdater {
 
 		for (int i = 0; i < locals; i++) {
 			comp++;
-			for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
+			for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 				String type = entry.getKey();
 				Mappings input_fci = entry.getValue();
-				Mappings maps = MappingsObtainer.input.get(type);
+				Mappings maps = App.obtainer.input.get(type);
 
 				if(type.equals("obf")) {//Need to adjust this for servers and clients
 					 maps=input_fci;
@@ -342,10 +343,10 @@ public class FCIUpdater {
 
 		
 		if(classHasMaps(clazz)) {
-		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input_fcis.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 			String type = entry.getKey();
 			Mappings input_fci = entry.getValue();
-			Mappings maps = MappingsObtainer.input.get(type);
+			Mappings maps = App.obtainer.input.get(type);
 
 			if(type.equals("obf")) {//Need to adjust this for servers and clients
 				if(input_fci.getClasses().containsKey(clazz)) {
@@ -402,11 +403,11 @@ public class FCIUpdater {
 	//To check if any of the existing mappings have a mapping for a given def
 	public static boolean defHasMaps(String def) {
 		
-		if(MappingsObtainer.input.size()==0) {
+		if(App.obtainer.input.size()==0) {
 			return true; // TO be reevaluated but if empty we would not want a conflict with this method
 		}
 		
-		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 			
 			if(entry.getValue().getDefs().containsKey(def)) {
 				return true;
@@ -423,11 +424,11 @@ public class FCIUpdater {
 	//To check if any of the existing mappings have a mapping for a given def
 	public static boolean varHasMaps(String var) {
 		
-		if(MappingsObtainer.input.size()==0) {
+		if(App.obtainer.input.size()==0) {
 			return true; // TO be reevaluated but if empty we would not want a conflict with this method
 		}
 		
-		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 			
 			if(entry.getValue().getVars().containsKey(var)) {
 				return true;
@@ -444,11 +445,11 @@ public class FCIUpdater {
 	//To check if any of the existing mappings have a mapping for a given def
 	public static boolean classHasMaps(String clazz) {
 		
-		if(MappingsObtainer.input.size()==0) {
+		if(App.obtainer.input.size()==0) {
 			return true; // TO be reevaluated but if empty we would not want a conflict with this method
 		}
 		
-		for (Map.Entry<String, Mappings> entry : MappingsObtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
 			
 			if(entry.getValue().getClasses().containsKey(clazz)) {
 				return true;
