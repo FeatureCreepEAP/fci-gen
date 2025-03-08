@@ -3,15 +3,14 @@ package com.asbestosstar.fci_gen;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import com.asbestosstar.assistremapper.Mappings;
 import com.asbestosstar.assistremapper.mappings.PDMEMappings;
 
 public class GetInputFCI {
 
-	public static Map<String, Mappings> input_fcis = new HashMap<String, Mappings>();
+	public static LinkedHashMap<String, Mappings> input_fcis = new LinkedHashMap<String, Mappings>();
 	
 	/**
 	 * Do not Call. Gets the FCIs from the PDME Files and puts them info fci_inputs the field
@@ -29,6 +28,39 @@ public class GetInputFCI {
 
 		// 如果找到匹配的文件，则为其创建输入流
 		if (files != null) {
+			
+			try {
+				for (File prefile : files) {
+					String filename = prefile.getName();
+					try (FileInputStream preinputStream = new FileInputStream(prefile)) {
+						if (filename.contains("legacy-fabric-intermediary")) {
+							input_fcis.put("legacy-fabric-intermediary", new PDMEMappings(preinputStream));
+							App.logger.info("Found Legacy Fain");
+
+						} else if (filename.contains("fabric-intermediary")) {
+							Mappings fain = new PDMEMappings(preinputStream);
+							input_fcis.put("fabric-intermediary", fain);
+							if(input_fcis.containsKey("ref")) {
+								Mappings ref = input_fcis.get("ref");
+								fain.getClasses().putAll(ref.getClasses());
+								fain.getDefs().putAll(ref.getDefs());
+								fain.getVars().putAll(ref.getVars());
+								fain.getParams().putAll(ref.getParams());
+								input_fcis.remove("ref");
+								App.logger.info("Added REF");
+							}
+							
+							App.logger.info("Found FAIN");
+
+						}
+					}
+				
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			for (File file : files) {
 				try (FileInputStream inputStream = new FileInputStream(file)) {
 					// 这里你可以处理输入流，比如读取文件内容
@@ -41,25 +73,8 @@ public class GetInputFCI {
 					if (filename.contains("sugercane")) { // includes parchment and mojmap
 						input_fcis.put("sugercane", new PDMEMappings(inputStream));
 						App.logger.info("Found SugarCane");
-					} else if (filename.contains("legacy-fabric-intermediary")) {
-						input_fcis.put("legacy-fabric-intermediary", new PDMEMappings(inputStream));
-						App.logger.info("Found Legacy Fain");
-
+					} else if (filename.contains("legacy-fabric-intermediary")) {//Ya tenemos estos
 					} else if (filename.contains("fabric-intermediary")) {
-						Mappings fain = new PDMEMappings(inputStream);
-						input_fcis.put("fabric-intermediary", fain);
-						if(input_fcis.containsKey("ref")) {
-							Mappings ref = input_fcis.get("ref");
-							fain.getClasses().putAll(ref.getClasses());
-							fain.getDefs().putAll(ref.getDefs());
-							fain.getVars().putAll(ref.getVars());
-							fain.getParams().putAll(ref.getParams());
-							input_fcis.remove("ref");
-							App.logger.info("Added REF");
-						}
-						
-						App.logger.info("Found FAIN");
-
 					} else if (filename.contains("babric-intermediary")) {
 						input_fcis.put("babric-intermediary", new PDMEMappings(inputStream));
 					}
