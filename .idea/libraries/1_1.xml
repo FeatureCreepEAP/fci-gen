@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="1.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../AssistRemapper/target/central-staging/com/asbestosstar/assistremapper/1.1/assistremapper-1.1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AssistRemapper/target/central-staging/com/asbestosstar/assistremapper/1.1/assistremapper-1.1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../AssistRemapper/target/central-staging/com/asbestosstar/assistremapper/1.1/assistremapper-1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

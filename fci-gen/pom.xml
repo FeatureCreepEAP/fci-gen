@@ -29,11 +29,14 @@
 
 
 	<dependencies>
+
 		<dependency>
 			<groupId>com.asbestosstar</groupId>
 			<artifactId>minecraft-mappings-obtainer</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
+
 <!-- https://mvnrepository.com/artifact/io.codechicken/DiffPatch -->
 <dependency>
     <groupId>io.codechicken</groupId>

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
+
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -21,17 +23,24 @@ import javassist.bytecode.MethodInfo;
 
 public class DupRemover {
 
-	public static ClassPool classpool = new ClassPool();
-	public static ArrayList<CtClass> ct_clazzes = new ArrayList<CtClass>();
-	public static ArrayList<ClassFile> clazzes = new ArrayList<ClassFile>();
+	public ClassPool classpool = new ClassPool();
+	public ArrayList<CtClass> ct_clazzes = new ArrayList<CtClass>();
+	public ArrayList<ClassFile> clazzes = new ArrayList<ClassFile>();
 
+	public MappingsObtainer obtainer;
+	public FCIUpdater updater;
+	
+	public DupRemover(MappingsObtainer obtainer,FCIUpdater updater) {
+	this.obtainer = obtainer;	
+	this.updater = updater;
+	}
 	
 	
-	public static void removeDupes() {
+	public void removeDupes() {
 		try {
-			App.obtainer.game_jar.reset();
-			addToClasspathJarFromStream(App.obtainer.game_jar);
-			App.obtainer.game_jar.reset();
+			obtainer.game_jar.reset();
+			addToClasspathJarFromStream(obtainer.game_jar);
+			obtainer.game_jar.reset();
 			rename_all();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -42,7 +51,7 @@ public class DupRemover {
 	
 	
 	
-	public static void addToClasspathJarFromStream(InputStream jarInputStream) {  
+	public void addToClasspathJarFromStream(InputStream jarInputStream) {  
 	    try (JarInputStream jarInput = new JarInputStream(new BufferedInputStream(jarInputStream))) {  
 	        JarEntry entry;  
 	        while ((entry = jarInput.getNextJarEntry()) != null) {  
@@ -90,7 +99,7 @@ public class DupRemover {
 	
 	
 	
-	public static void rename_all() {
+	public void rename_all() {
 		// TODO Auto-generated method stub
 
 		for(ClassFile file: clazzes) {
@@ -116,13 +125,13 @@ public class DupRemover {
 	
 	
 	
-	public static void putMethod(MethodInfo def, ClassFile file) {
+	public void putMethod(MethodInfo def, ClassFile file) {
 
 		ArrayList<String> recersive_names = new ArrayList<String>();
 
 		String old_nombre = def.getName();
 		String key = file.getName().replace("/", ".") + "." + def.getName() + def.getDescriptor();
-		String nombre = FCIUpdater.main.getDefs().get(key);;
+		String nombre = updater.main.getDefs().get(key);;
 
 		if (nombre != null) {
 			if (classFileHasMethod(file.getName(), nombre, def.getDescriptor()) && !old_nombre.equals(nombre)) {
@@ -135,7 +144,7 @@ public class DupRemover {
 
 	}
 	
-	public static boolean classFileHasMethod(String clazz, String method_name, String desc) {
+	public boolean classFileHasMethod(String clazz, String method_name, String desc) {
 
 		for (CtMethod method : getClassFromPool(clazz).getMethods()) {
 			if (method.getName().equals(method_name) && method.getSignature().equals(desc)) {
@@ -152,13 +161,13 @@ public class DupRemover {
 	
 	
 	
-	public static void putField(FieldInfo var, ClassFile file) {
+	public void putField(FieldInfo var, ClassFile file) {
 
 		ArrayList<String> recersive_names = new ArrayList<String>();
 
 		String old_nombre = var.getName();
 		String key = file.getName().replace("/", ".") + "." + var.getName() + var.getDescriptor();
-		String nombre = FCIUpdater.main.getVars().get(key);; // just use get so we only get the oldest
+		String nombre = updater.main.getVars().get(key);; // just use get so we only get the oldest
 
 		if (nombre != null) {
 			if (classFileHasField(file.getName(), nombre, var.getDescriptor()) && !old_nombre.equals(nombre)) {
@@ -171,7 +180,7 @@ public class DupRemover {
 
 	}
 	
-	public static boolean classFileHasField(String clazz, String field_name, String desc) {
+	public boolean classFileHasField(String clazz, String field_name, String desc) {
 
 		for (CtField field : getClassFromPool(clazz).getFields()) {
 			if (field.getName().equals(field_name) && field.getSignature().equals(desc)) {
@@ -192,13 +201,13 @@ public class DupRemover {
 	
 	
 	
-	public static CtClass getClassFromPool(String name) {
+	public CtClass getClassFromPool(String name) {
 		try {// I also need a delete classes array
-			return FCIUpdater.sl.pool.get(name);
+			return updater.sl.pool.get(name);
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
-				return FCIUpdater.sl.pool.makeClass(name);
+				return updater.sl.pool.makeClass(name);
 		}
 	}
 	

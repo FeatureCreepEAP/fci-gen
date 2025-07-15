@@ -1,16 +1,19 @@
 package com.asbestosstar.fci_gen;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 
+import com.asbestosstar.minecraftmappingsobtainer.MappingConverter;
 import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
 import com.asbestosstar.minecraftmappingsobtainer.MinecraftSide;
+import com.asbestosstar.minecraftmappingsobtainer.VersionUtils;
 
 public class App {
 
@@ -18,16 +21,27 @@ public class App {
 	public static ModelNode config = new ModelNode();
 	public static int config_format = 1;
 	public static ModelNode input_mappings = new ModelNode();
-	public static MinecraftSide side;
-	public static MappingsObtainer obtainer;
+	//public static MinecraftSide side;
+	public static MappingsObtainer cliente;
+	public static MappingsObtainer servidor;
+	public static MappingsObtainer obtainer;// SOLO PARA 1.3+
+	public static FCIUpdater actualizidor_1_3;// SOLO PARA 1.3+
+	public static FCIUpdater actualizidor_cliente;// SOLO PARA VERSIONES ANTES DE 1,3
+	public static FCIUpdater actualizidor_servidor;// SOLO PARA VERSIONES ANTES DE 1,3
+
 	public static List<String> idiomas = new ArrayList<String>();
+	public static String version_de_juego;
+	public static boolean is_pre_1_3;
+	public static MappingConverter convertidor;
+	public Map<String,String> cliente_servidor = new HashMap<>();
+
 	
 	public static void main(String[] args) {
 		File config_file = new File("config.dmr");
 		if(!config_file.exists()) {
 			config.get("fci-gen-config-format").set(config_format);
 			config.get("game-version").set("1.21.4");
-			config.get("side").set("client");
+			//config.get("side").set("client");
 			config.get("unknowns_minimum").get("class").set(0);
 			config.get("unknowns_minimum").get("def").set(0);
 			config.get("unknowns_minimum").get("var").set(0);
@@ -48,11 +62,10 @@ public class App {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(config.get("side").asString().equals("server")) {
-		side=MinecraftSide.SERVER;
-		}else {
-		side=MinecraftSide.CLIENT;
-		}
+		
+		
+		
+
 		
 		if(config_format>config.get("fci-gen-config-format").asInt()) {
 			logger.fatal("Obsolete Config, please backup and delete and restart program to get new config");
@@ -62,16 +75,42 @@ public class App {
 			idiomas.add(node.asString());
 		}
 		
-		if(args[0].equals("--actualizarParches")) {
+		
+		version_de_juego = config.get("game-version").asString();
+		
+		if(args.length > 0 && args[0].equals("--actualizarParches")) {
 		File resultos =	new File(App.config.get("output").asString()+"/"+config.get("game-version").asString()+"/resultos.dmr");
 			
 		}else {
-		obtainer = new MappingsObtainer(config.get("game-version").asString(),side);
-		obtainer.input.remove("featurecreep-intermediary");
-		GetInputFCI.getFCIInput();
-		FCIUpdater.onUpdate();
-		CSVGen.makeCSV();
-		FCIExporter.export();
+			is_pre_1_3=VersionUtils.isVersionLessThan1_3_12w18a(version_de_juego);
+			
+			
+			
+			if(is_pre_1_3) {
+				//TODO
+				logger.info("pre 1.3");
+				convertidor = new MappingConverter(version_de_juego);
+				cliente= convertidor.client;
+				servidor= convertidor.server;
+
+				
+			}else {
+				logger.info("1.3+");
+				obtainer = new MappingsObtainer(version_de_juego,MinecraftSide.COMMON_1_3);
+				obtainer.input.remove("featurecreep-intermediary");
+				cliente = new MappingsObtainer(version_de_juego,MinecraftSide.CLIENT,false);
+				servidor = new MappingsObtainer(version_de_juego,MinecraftSide.SERVER,false);
+				
+				actualizidor_1_3=new FCIUpdater(obtainer);
+				GetInputFCI.getFCIInput();
+				actualizidor_1_3.onUpdate();
+				new CSVGen(obtainer, actualizidor_1_3, null).makeCSV();
+				new FCIExporter(obtainer, actualizidor_1_3).export();
+				Pacheador.generarProyectosJava();
+			}
+
+			
+			
 		
 		String output = config.toString();
 		FCIGenUtils.writeStringToFile(output, config_file);

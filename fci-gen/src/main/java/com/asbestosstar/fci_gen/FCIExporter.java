@@ -8,24 +8,39 @@ import java.util.Map;
 
 import com.asbestosstar.assistremapper.Mappings;
 import com.asbestosstar.assistremapper.mappings.PDMEMappings;
+import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
+import com.asbestosstar.minecraftmappingsobtainer.MinecraftSide;
 
 public class FCIExporter {
 
-	public static void export() {
+	public MappingsObtainer obtainer;
+	public FCIUpdater updater;
+	
+	public FCIExporter(MappingsObtainer obtainer,FCIUpdater updater) {
+		this.obtainer=obtainer;
+		this.updater=updater;
+	}
+	
+	
+	public void export() {
 		App.logger.info("Exporting");
 		try {
 			String main_name;
-			if(App.obtainer.isPre1() || App.obtainer.isNewerThanVersion("1.2.6")) {
-				main_name = App.config.get("output").asString()+"/"+App.obtainer.version+"/" +"featurecreep-intermediary-"+App.obtainer.version+"-"+App.config.get("side").asString()+".pdme";
+			if(App.is_pre_1_3) {
+				if(obtainer.side.equals(MinecraftSide.SERVER)) {
+				main_name = App.config.get("output").asString()+"/"+obtainer.version+"/" +"featurecreep-intermediary-"+obtainer.version+"-server.pdme";
+				}else {
+					main_name = App.config.get("output").asString()+"/"+obtainer.version+"/" +"featurecreep-intermediary-"+obtainer.version+"-client.pdme";
+				}
 			}else {
-				main_name = App.config.get("output").asString()+"/"+App.obtainer.version+"/" +"featurecreep-intermediary-"+App.obtainer.version+".pdme";
+				main_name = App.config.get("output").asString()+"/"+obtainer.version+"/" +"featurecreep-intermediary-"+obtainer.version+".pdme";
 			}
 			
 			File example = new File(main_name);
 			example.getParentFile().mkdirs();
 			example.createNewFile();
 			try (DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(main_name))) {
-				FCIUpdater.main.write(dataOutputStream);
+				updater.main.write(dataOutputStream);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -35,13 +50,13 @@ public class FCIExporter {
 		
 		
 		//Most mappings are the same on both server and client but not all
-		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : obtainer.input.entrySet()) {
 			String name = entry.getKey();
 			Mappings to_conv = entry.getValue();
 			Mappings ret = new PDMEMappings();
-			Mappings.convert(FCIUpdater.main, to_conv, ret);
+			Mappings.convert(updater.main, to_conv, ret);
 			
-			String main_name = App.config.get("output").asString()+"/"+App.obtainer.version+"-"+name+"/" +"featurecreep-intermediary-"+App.obtainer.version+"-"+name+".pdme";
+			String main_name = App.config.get("output").asString()+"/"+obtainer.version+"-"+name+"/" +"featurecreep-intermediary-"+obtainer.version+"-"+name+".pdme";
 
 			try {
 				File example = new File(main_name);

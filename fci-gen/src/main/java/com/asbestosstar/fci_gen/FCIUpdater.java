@@ -7,6 +7,7 @@ import java.util.Map;
 import com.asbestosstar.assistremapper.AccessFlagCombiner;
 import com.asbestosstar.assistremapper.Mappings;
 import com.asbestosstar.assistremapper.mappings.PDMEMappings;
+import com.asbestosstar.minecraftmappingsobtainer.MappingsObtainer;
 import com.asbestosstar.structurelib.StructureLib;
 
 import javassist.CtClass;
@@ -21,22 +22,29 @@ import javassist.bytecode.Descriptor;
 import javassist.bytecode.Opcode;
 
 public class FCIUpdater {
+    private static final String MIN_VERSION = "1.2.6";
 
-	public static String[] denylisted_prefixes = new String[] { "io.netty", "net.minecraftforge", "net.fabricmc",
+    public String[] denylisted_prefixes = new String[] { "io.netty", "net.minecraftforge", "net.fabricmc",
 			"org.apache", "com.sun", "com.mojang", "com.google", "tv.twitch", "ow2.", "ca.weblite", "it.unimi",
 			"net.java.", "gnu.trove.", "javax.", "jopt.", "oshi.", "joptsimple", "commons-io", "org.joml", "org.slf4j",
 			"com.github" };
-	public static Mappings main = new PDMEMappings();
-	public static StructureLib sl = new StructureLib();
-	public static ArrayList<String> done_classes = new ArrayList<String>();
-	public static ArrayList<String> vars_y_defs_completa = new ArrayList<String>();
-	public static int class_index = 0;
-	public static int def_index = 0;
-	public static int var_index = 0;
-	public static int arg_index = 0;
+	public Mappings main = new PDMEMappings();
+	public StructureLib sl = new StructureLib();
+	public ArrayList<String> done_classes = new ArrayList<String>();
+	public ArrayList<String> vars_y_defs_completa = new ArrayList<String>();
+	public int class_index = 0;
+	public int def_index = 0;
+	public int var_index = 0;
+	public int arg_index = 0;
 
-	public static void onUpdate() {
-		sl.addJar(App.obtainer.game_jar);
+	public MappingsObtainer obtainer;
+
+	public FCIUpdater(MappingsObtainer obtainer) {
+		this.obtainer=obtainer;
+	}
+
+	public void onUpdate() {
+		sl.addJar(obtainer.game_jar);
 		class_index = App.config.get("unknowns_minimum").get("class").asInt();
 		def_index = App.config.get("unknowns_minimum").get("def").asInt();
 		var_index = App.config.get("unknowns_minimum").get("var").asInt();
@@ -105,7 +113,7 @@ public class FCIUpdater {
 
 	}
 
-	public static void getAccessFlag(String name) {
+	public void getAccessFlag(String name) {
 		// TODO Auto-generated method stub
 
 		for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
@@ -125,7 +133,7 @@ public class FCIUpdater {
 
 	}
 
-	public static boolean isDenyListed(String test) {
+	public boolean isDenyListed(String test) {
 		for (String preix : denylisted_prefixes) {
 			if (test.startsWith(preix)) {
 				return true;
@@ -147,7 +155,7 @@ public class FCIUpdater {
 
 	}
 
-	public static String getVar(String var) {
+	public String getVar(String var) {
 		// TODO Auto-generated method stub
 
 		boolean is_in_input = false;
@@ -187,12 +195,12 @@ public class FCIUpdater {
 			for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 				String type = entry.getKey();
 				Mappings input_fci = entry.getValue();
-				Mappings maps = App.obtainer.input.get(type);
-				if (type.equals("obf")) {// Need to adjust this for servers and clients
-					if (input_fci.getVars().containsKey(var)) {
-						return input_fci.getVars().get(var);
-					}
-				}
+				Mappings maps = obtainer.input.get(type);
+//				if (type.equals("obf")) {// Need to adjust this for servers and clients
+//					if (input_fci.getVars().containsKey(var)) {
+//						return input_fci.getVars().get(var);
+//					}
+//				}
 
 				if (maps != null) {
 					if (maps.getVars().containsKey(var)) {
@@ -244,7 +252,7 @@ public class FCIUpdater {
 
 	}
 
-	public static String getDef(String def) {
+	public String getDef(String def) {
 		// TODO Auto-generated method stub
 
 		boolean is_in_input = false;
@@ -323,7 +331,7 @@ public class FCIUpdater {
 			for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 				String type = entry.getKey();
 				Mappings input_fci = entry.getValue();
-				Mappings maps = App.obtainer.input.get(type);
+				Mappings maps = obtainer.input.get(type);
 
 				if (type.equals("obf")) {// Need to adjust this for servers and clients
 					if (input_fci.getDefs().containsKey(def)) {
@@ -380,7 +388,7 @@ public class FCIUpdater {
 
 	}
 
-	public static boolean notConflicting(String string) {
+	public boolean notConflicting(String string) {
 		// TODO Auto-generated method stub
 		if (vars_y_defs_completa.contains(string)) {
 			return false;
@@ -390,7 +398,7 @@ public class FCIUpdater {
 	}
 
 	// We could also make this do LocalVars
-	public static String[] getParams(String def) {
+	public String[] getParams(String def) {
 		// TODO Auto-generated method stub
 
 		String[] old_class_arr = java.util.Arrays.copyOfRange(def.split("\\."), 0, def.split("\\.").length - 1);
@@ -406,7 +414,7 @@ public class FCIUpdater {
 			for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 				String type = entry.getKey();
 				Mappings input_fci = entry.getValue();
-				Mappings maps = App.obtainer.input.get(type);
+				Mappings maps = obtainer.input.get(type);
 
 				if (type.equals("obf")) {// Need to adjust this for servers and clients
 					maps = input_fci;
@@ -446,7 +454,7 @@ public class FCIUpdater {
 		return ret;
 	}
 
-	public static String getClass(String clazz) {
+	public String getClass(String clazz) {
 		// TODO Auto-generated method stub
 
 //Subclasses should already be mostly parsed
@@ -455,7 +463,7 @@ public class FCIUpdater {
 			for (Map.Entry<String, Mappings> entry : GetInputFCI.input_fcis.entrySet()) {
 				String type = entry.getKey();
 				Mappings input_fci = entry.getValue();
-				Mappings maps = App.obtainer.input.get(type);
+				Mappings maps = obtainer.input.get(type);
 
 				if (type.equals("obf")) {// Need to adjust this for servers and clients
 					if (input_fci.getClasses().containsKey(clazz)) {
@@ -502,20 +510,20 @@ public class FCIUpdater {
 
 	}
 
-	public static List<String> getIncludes(String clazz) {
+	public List<String> getIncludes(String clazz) {
 
 		return sl.getImmediateInheritedClasses(clazz);
 
 	}
 
 	// To check if any of the existing mappings have a mapping for a given def
-	public static boolean defHasMaps(String def) {
+	public boolean defHasMaps(String def) {
 
-		if (App.obtainer.input.size() == 0) {
+		if (obtainer.input.size() == 0) {
 			return true; // TO be reevaluated but if empty we would not want a conflict with this method
 		}
 
-		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : obtainer.input.entrySet()) {
 
 			if (entry.getValue().getDefs().containsKey(def)) {
 				return true;
@@ -528,13 +536,13 @@ public class FCIUpdater {
 	}
 
 	// To check if any of the existing mappings have a mapping for a given def
-	public static boolean varHasMaps(String var) {
+	public boolean varHasMaps(String var) {
 
-		if (App.obtainer.input.size() == 0) {
+		if (obtainer.input.size() == 0) {
 			return true; // TO be reevaluated but if empty we would not want a conflict with this method
 		}
 
-		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : obtainer.input.entrySet()) {
 
 			if (entry.getValue().getVars().containsKey(var)) {
 				return true;
@@ -547,13 +555,13 @@ public class FCIUpdater {
 	}
 
 	// To check if any of the existing mappings have a mapping for a given def
-	public static boolean classHasMaps(String clazz) {
+	public boolean classHasMaps(String clazz) {
 
-		if (App.obtainer.input.size() == 0) {
+		if (obtainer.input.size() == 0) {
 			return true; // TO be reevaluated but if empty we would not want a conflict with this method
 		}
 
-		for (Map.Entry<String, Mappings> entry : App.obtainer.input.entrySet()) {
+		for (Map.Entry<String, Mappings> entry : obtainer.input.entrySet()) {
 
 			if (entry.getValue().getClasses().containsKey(clazz)) {
 				return true;

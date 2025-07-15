@@ -18,9 +18,13 @@ public class Traductor {
 
 	public static void actualizeIdiomas() {
 		// TODO Auto-generated method stub
-		FCIUpdater.main.parseSubClasses();
-		FCIUpdater.main.refreshReverse();
-		Mappings rev = FCIUpdater.main.getReverse();
+		if(App.is_pre_1_3) {
+			//TODO
+		}else {
+		
+		App.actualizidor_1_3.main.parseSubClasses();
+		App.actualizidor_1_3.main.refreshReverse();
+		Mappings rev = App.actualizidor_1_3.main.getReverse(); //TODO actualizar para servidor y cliente
 		for (String idioma : App.idiomas) {
 			String main_name = App.config.get("output").asString() + "/" + idioma + "/" + idioma + ".pdme";
 
@@ -80,7 +84,7 @@ public class Traductor {
 			}
 
 		}
-
+		}
 	}
 
 }
