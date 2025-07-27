@@ -52,6 +52,21 @@
     <version>0.2.2</version>
 </dependency>
 
+<!-- https://mvnrepository.com/artifact/net.fabricmc/mercury -->
+<dependency>
+    <groupId>net.fabricmc</groupId>
+    <artifactId>mercury</artifactId>
+    <version>0.6.0</version>
+    <!--<scope>runtime</scope>-->
+</dependency>
+
+
+<!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+<dependency>
+    <groupId>org.jetbrains</groupId>
+    <artifactId>annotations</artifactId>
+    <version>26.0.2</version>
+</dependency>
 
 
 	</dependencies>
