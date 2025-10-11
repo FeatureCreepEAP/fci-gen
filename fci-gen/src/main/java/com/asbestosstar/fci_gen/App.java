@@ -48,6 +48,7 @@ public class App {
 			config.get("unknowns_minimum").get("params").set(0); //Yes we are doing param_unknown now 
 			config.get("output").set("output/");
 			config.get("idiomas").add("english");
+			config.get("habilitar-generador-de-parches").set("false"); //es WIP y solo para minecraft. Recaf es mas buena
 			String output = config.toString();
 			FCIGenUtils.writeStringToFile(output, config_file);
 			logger.fatal("Config Generated, please update config.dmr");
@@ -80,9 +81,9 @@ public class App {
 		
 		if(args.length > 0 && args[0].equals("--actualizarParches")) {
 		File resultos =	new File(App.config.get("output").asString()+"/"+config.get("game-version").asString()+"/resultos.dmr");
-			
+			Pacheador.generarParches();
 		}else {
-			is_pre_1_3=VersionUtils.isVersionLessThan1_3_12w18a(version_de_juego);
+			is_pre_1_3=VersionUtils.isVersionLessThan1_3_12w30a(version_de_juego);
 			
 			
 			
@@ -103,10 +104,15 @@ public class App {
 				
 				actualizidor_1_3=new FCIUpdater(obtainer);
 				GetInputFCI.getFCIInput();
+				App.logger.info("Obtener Input Completa");
 				actualizidor_1_3.onUpdate();
+				App.logger.info("Actualizidor Completa");
 				new CSVGen(obtainer, actualizidor_1_3, null).makeCSV();
 				new FCIExporter(obtainer, actualizidor_1_3).export();
+			if(config.get("habilitar-generador-de-parches").asBoolean())	{
 				Pacheador.generarProyectosJava();
+			}
+			
 			}
 
 			

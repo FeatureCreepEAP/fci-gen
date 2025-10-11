@@ -76,49 +76,90 @@ public class GetInputFCI {
 					} else if (filename.contains("legacy-fabric-intermediary")) {//Ya tenemos estos
 					} else if (filename.contains("fabric-intermediary")) {
 					} else if (filename.contains("babric-intermediary")) {
+						App.logger.info("Adding Babric-Intermediary");
 						input_fcis.put("babric-intermediary", new PDMEMappings(inputStream));
 					}
 					else if (filename.contains("srg") && !filename.contains("parchsrg")) {
+						App.logger.info("Adding SRG");
 						input_fcis.put("srg", new PDMEMappings(inputStream));
 						App.logger.info("Found SRG");
 
 					} else if (filename.contains("mcp")) {
+						App.logger.info("Adding MCP");
 						input_fcis.put("mcp", new PDMEMappings(inputStream));
 					} else if (filename.contains("hashed-mojmap")) {
+						App.logger.info("Adding Hashed Mojmap");
 						input_fcis.put("hashed-mojmap", new PDMEMappings(inputStream));
 					} else if (filename.contains("spigot")) {
+						App.logger.info("Adding Spigot");
 						input_fcis.put("spigot", new PDMEMappings(inputStream));
 					} else if (filename.contains("dynamic-mappings")) {
+						App.logger.info("Adding DynamicMappings");
 						input_fcis.put("dynamic-mappings", new PDMEMappings(inputStream));
 					} else if (filename.contains("m3l-mappings")) {
+						App.logger.info("Adding m3l");
 						input_fcis.put("m3l-mappings", new PDMEMappings(inputStream));
-					} else if (filename.contains("yarn")) { // Since POMF was never used at runtime it is ok to use the
+					} else if (filename.contains("yarn")&&!filename.contains("blayyke")) { // Since POMF was never used at runtime it is ok to use the
 															// updated yarn mappings from LegacyFabric
 						input_fcis.put("yarn", new PDMEMappings(inputStream));
 						App.logger.info("Found Yarn");
 					} else if (filename.contains("barn")) {
+						App.logger.info("Adding Babric-Intermediary");
 						input_fcis.put("barn", new PDMEMappings(inputStream));
 					} else if (filename.contains("blayyke_yarn")) {
+						App.logger.info("Adding Blayyke");
 						input_fcis.put("blayyke_yarn", new PDMEMappings(inputStream));
 					} else if (filename.contains("plasma")) {
+						App.logger.info("Adding Plasma");
 						input_fcis.put("plasma", new PDMEMappings(inputStream));
 					} else if (filename.contains("duvet-intermediary")) {
+						App.logger.info("Adding Duvet");
 						input_fcis.put("duvet-intermediary", new PDMEMappings(inputStream));
+						App.logger.info("Found Duevet");
 					} else if (filename.contains("chaos")) {
+						App.logger.info("Adding Chaos");
 						input_fcis.put("chaos", new PDMEMappings(inputStream));
 					} else if (filename.contains("pigeon")) {
+						App.logger.info("Adding pigeon");
 						input_fcis.put("pigeon", new PDMEMappings(inputStream));
 					} else if (filename.contains("calamus")) {
+						App.logger.info("Adding calamus");
 						input_fcis.put("calamus", new PDMEMappings(inputStream));
 					} else if (filename.contains("feather")) {
+						App.logger.info("Adding feather");
 						input_fcis.put("feather", new PDMEMappings(inputStream));
 					} else if (filename.contains("quilt")) {
+						App.logger.info("Adding quilt");
 						input_fcis.put("quilt", new PDMEMappings(inputStream));
 					} else if (filename.contains("client")) {
+						App.logger.info("Adding client");
 						input_fcis.put("client", new PDMEMappings(inputStream));
 					} else if (filename.contains("server")) {
+						App.logger.info("Adding server");
 						input_fcis.put("server", new PDMEMappings(inputStream));
 					}
+					
+					else if (filename.contains("duvet-ref")) { // Remove this after done
+						Mappings ref = new PDMEMappings(inputStream);
+						if(!input_fcis.containsKey("fabric-intermediary")) {
+						if(input_fcis.containsKey("duvet-intermediary")) {
+							Mappings duvetint = input_fcis.get("duvet-intermediary");
+							duvetint.getClasses().putAll(ref.getClasses());
+							duvetint.getDefs().putAll(ref.getDefs());
+							duvetint.getVars().putAll(ref.getVars());
+							duvetint.getParams().putAll(ref.getParams());
+						}else {
+							App.logger.info("No DuvetIntermediary");						
+							}
+							input_fcis.put("duvet-ref", ref);
+					} 
+					
+					
+					
+					}
+					
+					
+					
 					else if (filename.contains("ref")) { // Remove this after done
 						Mappings ref = new PDMEMappings(inputStream);
 						if(input_fcis.containsKey("fabric-intermediary")) {

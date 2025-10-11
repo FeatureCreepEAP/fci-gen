@@ -27,7 +27,7 @@ public class FCIUpdater {
     public String[] denylisted_prefixes = new String[] { "io.netty", "net.minecraftforge", "net.fabricmc",
 			"org.apache", "com.sun", "com.mojang", "com.google", "tv.twitch", "ow2.", "ca.weblite", "it.unimi",
 			"net.java.", "gnu.trove.", "javax.", "jopt.", "oshi.", "joptsimple", "commons-io", "org.joml", "org.slf4j",
-			"com.github" };
+			"com.github","com.jcraft","paulscode." };
 	public Mappings main = new PDMEMappings();
 	public StructureLib sl = new StructureLib();
 	public ArrayList<String> done_classes = new ArrayList<String>();
@@ -44,7 +44,9 @@ public class FCIUpdater {
 	}
 
 	public void onUpdate() {
+		App.logger.info("Agregar a StructureLib");
 		sl.addJar(obtainer.game_jar);
+		App.logger.info("en StructureLib");
 		class_index = App.config.get("unknowns_minimum").get("class").asInt();
 		def_index = App.config.get("unknowns_minimum").get("def").asInt();
 		var_index = App.config.get("unknowns_minimum").get("var").asInt();
@@ -97,6 +99,9 @@ public class FCIUpdater {
 				if (actualizado != null) {
 					main.addClass(clazz_name, actualizado);
 				}
+//				else {
+//					main.addClass(clazz_name, clazz_name);//por que subclases
+//				}
 				List<String> incls = getIncludes(clazz_name);
 				if (!incls.isEmpty()) {
 					String incl = String.join(",", incls);
@@ -501,6 +506,11 @@ public class FCIUpdater {
 				out = "obf.class_unknown_" + class_index + "_";
 			}
 
+			if(class_index==0) {
+				System.out.println("out 0 " + out + " in 0 "+ clazz);
+			}
+			
+			
 			class_index++;
 			return out;
 

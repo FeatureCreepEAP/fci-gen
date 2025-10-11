@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystemException;
@@ -49,7 +50,7 @@ import net.fabricmc.tinyremapper.api.TrEnvironment;
 
 public class Pacheador {
 
-	// 12w18a Pre Release for 1.3 which combined server and client
+	// 12w30a Pre Release for 1.3 which combined server and client
 	public static File carpeta_de_parches_de_ultima_version = new File("fci_input/parches/");
 	public static File carpeta_de_parches_de_ultima_version_cliente = new File("fci_input/parches/cliente/");
 	public static File carpeta_de_parches_de_ultima_version_servidor = new File("fci_input/parches/servidor/");
@@ -211,6 +212,16 @@ public class Pacheador {
 			copiarDirectorio(dirConParchesCliente, dirProyectoCliente);
 			copiarDirectorio(dirConParchesServidor, dirProyectoServidor);
 
+			String pom_cliente = App.cliente.getPom().toString();
+			String pom_servidor = App.servidor.getPom().toString();
+			FileWriter escribir_pom_cliente = new FileWriter(dirProyectoCliente.getCanonicalPath()+"/../../../pom.xml");
+			FileWriter escribir_pom_servidor = new FileWriter(dirProyectoServidor.getCanonicalPath()+"/../../../pom.xml");
+			escribir_pom_cliente.write(pom_cliente);
+			escribir_pom_servidor.write(pom_servidor);
+			escribir_pom_cliente.close();
+			escribir_pom_servidor.close();
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,7 +248,9 @@ public class Pacheador {
 							String nombre = pdme.getName().replace(".pdme", "").split(Pattern.quote(ver + "-"))[1];
 							BufferedReader leer = new BufferedReader(new FileReader(pdme));
 							IMappingProvider prov = TinyUtils.createTinyMappingProvider(leer,
-									MappingUtil.NS_SOURCE_FALLBACK, MappingUtil.NS_TARGET_FALLBACK);
+									MappingUtil.NS_TARGET_FALLBACK,  MappingUtil.NS_SOURCE_FALLBACK);
+//							IMappingProvider prov = TinyUtils.createTinyMappingProvider(leer,
+//									MappingUtil.NS_SOURCE_FALLBACK, MappingUtil.NS_TARGET_FALLBACK);
 							TinyRemapper tiny = TinyRemapper.newRemapper().threads(8)// TODO Config
 									.withMappings(prov).build();
 
@@ -460,7 +473,7 @@ public class Pacheador {
 		try {
 			String ubicacion_para_proyectos_java_str = obtainerCarpetaParaProyectosJava().getCanonicalPath();
 			String ubicacion_para_proyectos_java_servidor_proyecto = ubicacion_para_proyectos_java_str
-					+ "servidor_proyecto/";
+					+ "servidor_proyecto/src/main/java/";
 			return new File(ubicacion_para_proyectos_java_servidor_proyecto);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -480,7 +493,7 @@ public class Pacheador {
 		try {
 			String ubicacion_para_proyectos_java_str = obtainerCarpetaParaProyectosJava().getCanonicalPath();
 			String ubicacion_para_proyectos_java_servidor_con_parches_de_ultima_version = ubicacion_para_proyectos_java_str
-					+ "servidor_con_parches_de_ultima_version/";
+					+ "servidor_con_parches_de_ultima_version/src/main/java/";
 			return new File(ubicacion_para_proyectos_java_servidor_con_parches_de_ultima_version);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -498,7 +511,7 @@ public class Pacheador {
 	public static File obtainerCarpetaParaProyectosJavaServidorVainilla() {
 		try {
 			String ubicacion_para_proyectos_java_str = obtainerCarpetaParaProyectosJava().getCanonicalPath();
-			String ubicacion_para_proyectos_java_servidor = ubicacion_para_proyectos_java_str + "servidor/";
+			String ubicacion_para_proyectos_java_servidor = ubicacion_para_proyectos_java_str + "servidor/src/main/java/";
 			return new File(ubicacion_para_proyectos_java_servidor);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -516,7 +529,7 @@ public class Pacheador {
 		try {
 			String ubicacion_para_proyectos_java_str = obtainerCarpetaParaProyectosJava().getCanonicalPath();
 			String ubicacion_para_proyectos_java_cliente_proyecto = ubicacion_para_proyectos_java_str
-					+ "cliente_proyecto/";
+					+ "cliente_proyecto/src/main/java/";
 			return new File(ubicacion_para_proyectos_java_cliente_proyecto);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -536,7 +549,7 @@ public class Pacheador {
 		try {
 			String ubicacion_para_proyectos_java_str = obtainerCarpetaParaProyectosJava().getCanonicalPath();
 			String ubicacion_para_proyectos_java_cliente_con_parches_de_ultima_version = ubicacion_para_proyectos_java_str
-					+ "cliente_con_parches_de_ultima_version/";
+					+ "cliente_con_parches_de_ultima_version/src/main/java/";
 			return new File(ubicacion_para_proyectos_java_cliente_con_parches_de_ultima_version);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -555,7 +568,7 @@ public class Pacheador {
 		try {
 			String ubicacion_para_proyectos_java_str = obtainerCarpetaParaProyectosJava().getCanonicalPath();
 			App.logger.info(ubicacion_para_proyectos_java_str);
-			String ubicacion_para_proyectos_java_cliente = ubicacion_para_proyectos_java_str + "cliente/";
+			String ubicacion_para_proyectos_java_cliente = ubicacion_para_proyectos_java_str + "cliente/src/main/java/";
 			return new File(ubicacion_para_proyectos_java_cliente);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
